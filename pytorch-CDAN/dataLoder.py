@@ -71,6 +71,7 @@ def loadTrainData(path,batch_size,datasetIndex,imageSize,kwargs):
     trainDataLoder_tar = torch.utils.data.DataLoader(trainData_tar, batch_size=batch_size, shuffle=True,
                                                      drop_last=True, **kwargs)
     return trainDataLoder_src, trainDataLoder_tar
+
 def loadTestData(path,batch_size,datasetIndex,imageSize,kwargs):
     if datasetIndex == 0 or datasetIndex==5:
         transform=transforms.Compose(

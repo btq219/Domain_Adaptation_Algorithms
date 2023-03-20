@@ -2,6 +2,7 @@ import argparse
 import torch
 import model
 import dataLoder
+import data_loader
 
 # parameter setting
 parser=argparse.ArgumentParser()
@@ -9,18 +10,21 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--batchSize',type=int,default=128,metavar='batchSize',help='input the batch size of training process.(default=64)')
 parser.add_argument('--epoch',type=int, default=1000,metavar='epoch',help='the number of epochs for training.(default=100)')
 parser.add_argument('--lr',type=float,default=0.0002,metavar='LR',help='the learning rate for training.(default=1e-2)')
-parser.add_argument('--n_critic',type=int,default=1,help='the number of training critic before training others one time.(default=5)')
-parser.add_argument('--n_clf',type=int,default=10,help='the number of training classifier after training critic one time.(default=1)')
-parser.add_argument('--n_preclf',type=int,default=10,help='the number of training classifier after training critic one time.(default=1)')
-parser.add_argument('--n_labels',type=int,default=10,help='the number of sources and target labels')
-parser.add_argument('--n_dim',type=int,default=1,help='the channels of images.(default=1)')
+
 parser.add_argument('--l2_Decay',type=float,default=5e-4,help='parameter for SGD.(default=5e-4)')
 parser.add_argument('--momentum',type=float,default=0.9,metavar='M',help='SGD momentum.(default=0.5)')
 parser.add_argument('--lr_gamma', default=0.0003, type=float, help='parameter for lr scheduler.(default=3e-4)')
 parser.add_argument('--lr_decay', default=0.75, type=float, help='parameter for lr scheduler.(default=0.75)')
+
+parser.add_argument('--n_critic',type=int,default=1,help='the number of training critic before training others one time.(default=5)')
+parser.add_argument('--n_clf',type=int,default=10,help='the number of training classifier after training critic one time.(default=1)')
+parser.add_argument('--n_preclf',type=int,default=10,help='the number of training classifier after training critic one time.(default=1)')
+
+parser.add_argument('--n_labels',type=int,default=4,help='the number of sources and target labels')
+parser.add_argument('--n_dim',type=int,default=1,help='the channels of images.(default=1)')
 parser.add_argument('--entropy', default=False, action='store_true', help='use entropy conditioning')
 parser.add_argument('--batch_norm', default=True, help='use batchnorm')
-parser.add_argument('--bottleneck', default=True, help='use bottleneck')
+parser.add_argument('--bottleneck', default=False, help='use bottleneck')
 parser.add_argument('--randomized', default=False, type=bool,help='using randomized multi-linear-map (default: False)')
 parser.add_argument('--randomized-dim', default=1024, type=int,help='randomized dimension when using randomized multi-linear-map (default: 1024)')
 parser.add_argument('--trade-off', default=1., type=float,help='the trade-off hyper-parameter for transfer loss')
@@ -36,7 +40,7 @@ parser.add_argument('--logInterval', type=int,default=50,metavar='log',help='the
 parser.add_argument('--gpu', default=0, type=int,help='the index of GPU to use.(default=0)')
 parser.add_argument('--data_name',type=str,default='Digits',help='the model')#Digits
 parser.add_argument('--savePath',type=str,default='../checkpoints/',help='the file to save models.(default=checkpoints/)')
-parser.add_argument('--ifsave',default=False,type=bool,help='the file to save models.(default=False)')
+parser.add_argument('--ifsave',default=True,type=bool,help='the file to save models.(default=False)')
 parser.add_argument('--if_saveall',default=False,type=bool,help='if save all or just state.(default=False)')
 parser.add_argument('--loadPath',default='../checkpoints/',type=str,help='the file to save models.(default=checkpoints/)')
 parser.add_argument('--ifload',default=False,type=bool,help='the file to save models.(default=False)')
@@ -83,11 +87,14 @@ print(DEVICE,torch.cuda.is_available())
 
 if __name__ == '__main__':
 
-    sourceTrainLoader, targetTrainLoader = dataLoder.loadTrainData(datasetRootAndImageSize[args.datasetIndex], args.batchSize,
-                                                                   args.datasetIndex, datasetRootAndImageSize[args.datasetIndex][2],
-                                                                   kwargs)
-    sourceTestLoader, targetTestLoader = dataLoder.loadTestData(datasetRootAndImageSize[args.datasetIndex], args.batchSize, args.datasetIndex,
-                                              datasetRootAndImageSize[args.datasetIndex][2], kwargs)
+    # sourceTrainLoader, targetTrainLoader = dataLoder.loadTrainData(datasetRootAndImageSize[args.datasetIndex], args.batchSize,
+    #                                                                args.datasetIndex, datasetRootAndImageSize[args.datasetIndex][2],
+    #                                                                kwargs)
+    # sourceTestLoader, targetTestLoader = dataLoder.loadTestData(datasetRootAndImageSize[args.datasetIndex], args.batchSize, args.datasetIndex,
+    #                                           datasetRootAndImageSize[args.datasetIndex][2], kwargs)
+
+    sourceTrainLoader, sourceTestLoader = data_loader.create_dataloaders(batch_size=args.batchSize, dataset_name='sunny')
+    targetTrainLoader, targetTestLoader = data_loader.create_dataloaders(batch_size=args.batchSize, dataset_name='foggy')
 
 
     addamodel=model.ADDAModel(args).to(DEVICE)

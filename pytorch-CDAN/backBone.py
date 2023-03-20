@@ -30,6 +30,39 @@ class LeNet(nn.Module):
         x=self.backbone(x)
         return x
 
+class Net1d(nn.Module):
+    def __init__(self, n_dim):
+        super(Net1d, self).__init__()
+
+        self.num_classes = 4
+        self.bottleneck_dim = 50 * 4 * 4
+        self.n_dim = n_dim
+
+
+        self.backbone = nn.Sequential(
+            nn.Conv1d(self.n_dim, 32, kernel_size=3, padding=1),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(32, 64, kernel_size=3, padding=1),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(64, 128, kernel_size=3, padding=1),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(128, 256, kernel_size=3, padding=1),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Conv1d(256, 512, kernel_size=3, padding=1),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Flatten(start_dim=1)
+        )
+
+
+    def forward(self, x):
+        x = self.backbone(x)
+        return x
+
 class AlexNetFc(nn.Module):
     def __init__(self):
         super(AlexNetFc,self).__init__()
@@ -188,6 +221,7 @@ class ResNet152Fc(nn.Module):
 
 network_dict = {
     "LeNet":LeNet,
+    "Net1d":Net1d,
     "AlexNet": AlexNetFc,
     "ResNet18": ResNet18Fc,
     "ResNet34": ResNet34Fc,
