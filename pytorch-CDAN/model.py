@@ -32,7 +32,7 @@ def train_process(model, sourceDataLoader, targetDataLoader,sourceTestDataLoader
 
     lenSourceDataLoader = len(sourceDataLoader)
 
-    path = args.savePath + args.model_name
+    path = args.savePath
 
     writer = SummaryWriter(log_dir=path)
 
@@ -102,7 +102,7 @@ def train_process(model, sourceDataLoader, targetDataLoader,sourceTestDataLoader
         print('Train Accuracy: {}/{} ({:.2f}%)'.format(
             correct, (lenSourceDataLoader * args.batchSize), acc_train))
 
-        test_correct=test_process(model, sourceTestDataLoader,taragetTestDataLoader, DEVICE, args)
+        test_correct, test_acc=test_process(model, sourceTestDataLoader,taragetTestDataLoader, DEVICE, args)
         if test_correct > t_correct:
             t_correct = test_correct
         print("max correct:" , t_correct)
@@ -111,7 +111,7 @@ def train_process(model, sourceDataLoader, targetDataLoader,sourceTestDataLoader
         #                        args.model_name)
 
         writer.add_scalar(tag="acc_train", scalar_value=acc_train, global_step=epoch)
-        writer.add_scalar(tag="acc_test", scalar_value=test_correct, global_step=epoch)
+        writer.add_scalar(tag="acc_test", scalar_value=test_acc, global_step=epoch)
 
 
         if args.ifsave:
@@ -133,8 +133,8 @@ def train_process(model, sourceDataLoader, targetDataLoader,sourceTestDataLoader
 
                 }
 
-            if epoch % 20 == 0:
-                path+='/'+args.model_name+'_epoch'+str(args.epoch)+'.pth'
+            if epoch % 50 == 0:
+                path+='epoch'+str(epoch)+'.pth'
                 torch.save(state, path)
 
 
@@ -188,7 +188,8 @@ def test_process(model,sourceTestDataLoader,taragetTestDataLoader, device, args)
         print('\nTest set: Average loss: {:.4f}, target Test Accuracy: {}/{} ({:.0f}%)\n'.format(
             testLoss, correct, len(taragetTestDataLoader.dataset),
             100. * correct / len(taragetTestDataLoader.dataset)))
-    return correct
+        target_acc = 100. * correct / len(taragetTestDataLoader.dataset)
+    return correct, target_acc
 
 
 

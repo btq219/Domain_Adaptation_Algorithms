@@ -8,7 +8,7 @@ import data_loader
 parser=argparse.ArgumentParser()
 # model parameter
 parser.add_argument('--batchSize',type=int,default=128,metavar='batchSize',help='input the batch size of training process.(default=64)')
-parser.add_argument('--epoch',type=int, default=1000,metavar='epoch',help='the number of epochs for training.(default=100)')
+parser.add_argument('--epoch',type=int, default=2000,metavar='epoch',help='the number of epochs for training.(default=100)')
 parser.add_argument('--lr',type=float,default=0.0002,metavar='LR',help='the learning rate for training.(default=1e-2)')
 
 parser.add_argument('--l2_Decay',type=float,default=5e-4,help='parameter for SGD.(default=5e-4)')
@@ -39,7 +39,7 @@ parser.add_argument('--seed',type=int,default=1999,metavar='S',help='random seed
 parser.add_argument('--logInterval', type=int,default=50,metavar='log',help='the interval to log for one time.(default=10)')
 parser.add_argument('--gpu', default=0, type=int,help='the index of GPU to use.(default=0)')
 parser.add_argument('--data_name',type=str,default='Digits',help='the model')#Digits
-parser.add_argument('--savePath',type=str,default='../checkpoints/',help='the file to save models.(default=checkpoints/)')
+parser.add_argument('--savePath',type=str,default='../checkpoints/CDAN/',help='the file to save models.(default=checkpoints/)')
 parser.add_argument('--ifsave',default=True,type=bool,help='the file to save models.(default=False)')
 parser.add_argument('--if_saveall',default=False,type=bool,help='if save all or just state.(default=False)')
 parser.add_argument('--loadPath',default='../checkpoints/',type=str,help='the file to save models.(default=checkpoints/)')
